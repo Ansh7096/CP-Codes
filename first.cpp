@@ -1,53 +1,47 @@
-// AG___
-//There is a one percent chance, and sometimes that chance is good enough.
-//But what matters is what you think about that one percent.
-
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <climits>
 using namespace std;
-#define int long long
-#define endl "\n"
-int getSmallestSubarrayLength(int k,vector<int> amount)
-{
-set<int> s;
-    int n = amount.size();
-    s.insert(0);
-    map<int, int> mp;
-    int mini = INT_MAX;
-    for (int i = 0; i < n; i++)
-    {
-        for (auto it : s)
-        {
-            if (mp[it + amount[i] - k])
-                mini = min(mini, i + 1 - mp[it + amount[i] - k]);
-            s.insert(it + amount[i]);
-            mp[it + amount[i]] = i + 1;
+
+bool isSubsequenceSumK(const vector<int>& subarray, int k) {
+    int n = subarray.size();
+    vector<bool> dp(k + 1, false);
+    dp[0] = true;
+
+    for (int num : subarray) {
+        for (int sum = k; sum >= num; --sum) {
+            dp[sum] = dp[sum] || dp[sum - num];
         }
     }
-    return mini;
-}
-void sol()
-{
-   int n;
-   cin>>n;
-   vector<int> v(n);
-   for(int i=0;i<n;i++)
-   cin>>v[i];
-   int k;
-   cin>>k;
-int ans=getSmallestSubarrayLength(k,v);
-
-cout<<ans<<endl;
+    return dp[k];
 }
 
-signed main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    int t;
-    t = 1;
-    //cin>>t;
-    while (t--)
-    {
-        sol();
+int getSmallestSubarrayLength(int k, const vector<int>& amount) {
+    int n = amount.size();
+    int minLength = INT_MAX;
+    
+    for (int left = 0; left < n; left++) {
+        for (int right = left; right < n; right++) {
+            vector<int> subarray(amount.begin() + left, amount.begin() + right + 1);
+            if (isSubsequenceSumK(subarray, k)) {
+                minLength = min(minLength, right - left + 1);
+            }
+        }
     }
+
+    return (minLength == INT_MAX) ? -1 : minLength;
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> amount(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> amount[i];
+    }
+
+    int result = getSmallestSubarrayLength(k, amount);
+    cout << result << endl;
+
+    return 0;
 }

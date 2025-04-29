@@ -11,29 +11,31 @@ vector<int> pro_by;
 vector<int> dis;
 bool bfs(int k, int s, int id)
 {
+
     queue<pair<int, int>> q;
     q.push({k, 0});
-    if(pro_by[k]!=0)return false;
+    if (pro_by[k] != 0)
+        return false;
     pro_by[k] = id;
     dis[k] = 0;
 
     while (!q.empty())
     {
+
         int city = q.front().first;
         int dist = q.front().second;
         q.pop();
         if (dist == s)
             continue;
-
-        for (int u : adj[city])
+        for (int j : adj[city])
         {
-            if (dis[u] == -1)
+            if (dis[j] == -1)
             {
-                pro_by[u] = id;
-                dis[u] = dist + 1;
-                q.push({u, dist + 1});
+                pro_by[j] = id;
+                dis[j] = dist + 1;
+                q.push({j, dist + 1});
             }
-            else if (pro_by[u] != id)
+            else if (pro_by[j] != id)
                 return false;
         }
     }
@@ -46,7 +48,6 @@ void sol()
     adj.assign(n + 1, vector<int>());
     pro_by.assign(n + 1, 0);
     dis.assign(n + 1, -1);
-
     for (int i = 0; i < r; i++)
     {
         int a, b;
