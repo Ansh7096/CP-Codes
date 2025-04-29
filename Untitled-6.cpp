@@ -1,65 +1,141 @@
+// AG___
+// There is a one percent chance, and sometimes that chance is good enough.
+// But what matters is what you think about that one percent.
+
 #include <bits/stdc++.h>
 using namespace std;
+#define int long long
+#define endl "\n"
+void sol()
+{
+    int n, m;
+    cin >> n >> m;
 
-const int MAXN = 65536;
+    vector<vector<char>> v(n, vector<char>(m));
+    vector<vector<bool>> vis(n, vector<bool>(m, false));
+    vector<vector<char>> par(n, vector<char>(m, 'x'));
 
-int parent[MAXN], depth[MAXN];
-vector<int> tree[MAXN];
-vector<int> pos_in_dfs;
-int n, q;
+    pair<int, int> start, stort, end;
 
-void dfs(int v, vector<int>& dfs_order) {
-    dfs_order.push_back(v);
-    for (int u : tree[v]) {
-        dfs(u, dfs_order);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            cin >> v[i][j];
+            if (v[i][j] == 'A')
+                start = {i, j};
+            else if (v[i][j] == 'B')
+                end = {i, j};
+        }
     }
-}
 
-bool isValidDFSOrder(vector<int>& p) {
-    vector<int> dfs_order;
-    dfs(1, dfs_order);
+    stort = start;
+    vis[start.first][start.second] = true;
+    queue<pair<int, int>> q;
+
+   
+    if (start.first + 1 < n && v[start.first + 1][start.second] != '#' && !vis[start.first + 1][start.second])
+    {
+        q.push({start.first + 1, start.second});
+        vis[start.first + 1][start.second] = true;
+        par[start.first + 1][start.second] = 'D';
+    }
+
+    if (start.first - 1 >= 0 && v[start.first - 1][start.second] != '#' && !vis[start.first - 1][start.second])
+    {
+        q.push({start.first - 1, start.second});
+        vis[start.first - 1][start.second] = true;
+        par[start.first - 1][start.second] = 'U'; 
+    }
+
+    if (start.second + 1 < m && v[start.first][start.second + 1] != '#' && !vis[start.first][start.second + 1])
+    {
+        q.push({start.first, start.second + 1});
+        vis[start.first][start.second + 1] = true;
+        par[start.first][start.second + 1] = 'R';
+    }
+
+    if (start.second - 1 >= 0 && v[start.first][start.second - 1] != '#' && !vis[start.first][start.second - 1])
+    {
+        q.push({start.first, start.second - 1});
+        vis[start.first][start.second - 1] = true;
+        par[start.first][start.second - 1] = 'L'; 
+    }
+
     
-    for (int i = 0; i < n; i++) {
-        if (p[i] != dfs_order[i])
-            return false;
+    while (!q.empty() && q.front() != end)
+    {
+        start = q.front();
+        q.pop();
+
+        if (start.first + 1 < n && v[start.first + 1][start.second] != '#' && !vis[start.first + 1][start.second])
+        {
+            q.push({start.first + 1, start.second});
+            vis[start.first + 1][start.second] = true;
+            par[start.first + 1][start.second] = 'D'; 
+        }
+
+        if (start.first - 1 >= 0 && v[start.first - 1][start.second] != '#' && !vis[start.first - 1][start.second])
+        {
+            q.push({start.first - 1, start.second});
+            vis[start.first - 1][start.second] = true;
+            par[start.first - 1][start.second] = 'U'; 
+        }
+
+        if (start.second + 1 < m && v[start.first][start.second + 1] != '#' && !vis[start.first][start.second + 1])
+        {
+            q.push({start.first, start.second + 1});
+            vis[start.first][start.second + 1] = true;
+            par[start.first][start.second + 1] = 'R';
+        }
+
+        if (start.second - 1 >= 0 && v[start.first][start.second - 1] != '#' && !vis[start.first][start.second - 1])
+        {
+            q.push({start.first, start.second - 1});
+            vis[start.first][start.second - 1] = true;
+            par[start.first][start.second - 1] = 'L';
+        }
     }
-    return true;
+
+    // Check if we reached the end
+    if (!q.empty() && q.front() == end)
+    {
+        cout << "YES" << endl;
+
+       
+        string path;
+        pair<int, int> current = end;
+        while (current != stort)
+        {
+            char direction = par[current.first][current.second];
+            path.push_back(direction);
+
+            if (direction == 'U')
+                current.first += 1;
+            else if (direction == 'D')
+                current.first -= 1;
+            else if (direction == 'L')
+                current.second += 1;
+            else if (direction == 'R')
+                current.second -= 1;
+        }
+
+        reverse(path.begin(), path.end());
+        cout << path.size() << endl;
+        cout << path << endl;
+    }
+    else
+        cout << "NO" << endl;
 }
 
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
+signed main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
     int t;
-    cin >> t;
-    
-    while (t--) {
-        cin >> n >> q;
-        
-        for (int i = 2; i <= n; i++) {
-            cin >> parent[i];
-            tree[parent[i]].push_back(i);
-        }
-        
-        vector<int> p(n);
-        pos_in_dfs.resize(n + 1);
-        for (int i = 0; i < n; i++) {
-            cin >> p[i];
-            pos_in_dfs[p[i]] = i;
-        }
-        
-        for (int i = 0; i < q; i++) {
-            int x, y;
-            cin >> x >> y;
-            swap(p[x-1], p[y-1]);
-            if (isValidDFSOrder(p))
-                cout << "YES\n";
-            else
-                cout << "NO\n";
-        }
-        
-        for (int i = 1; i <= n; i++) {
-            tree[i].clear();
-        }
+    t = 1;
+    while (t--)
+    {
+        sol();
     }
-    
-    return 0;
 }

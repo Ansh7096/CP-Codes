@@ -1,34 +1,36 @@
+// AG___
+//There is a one percent chance, and sometimes that chance is good enough.
+//But what matters is what you think about that one percent.
+
 #include <bits/stdc++.h>
 using namespace std;
+#define int long long
+#define endl "\n"
+int getSmallestSubarrayLength(int k,vector<int> amount)
+{
 
-int main() {
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
+}
+void sol()
+{
+   int n;
+   cin>>n;
+   vector<int> v(n);
+   for(int i=0;i<n;i++)
+   cin>>v[i];
+   int k;
+   cin>>k;
+    getSmallestSubarrayLength(k,v);
+}
 
-    // Initialize variables
-    int currPos = 0; // Current position
-    int timeSpent = 0; // Time spent
-    int maxDelay = 0; // Maximum delay
-
-    // Simulate Robin's movement
-    for (char c : s) {
-        if (c == '(') {
-            currPos++; // Move right
-        } else {
-            currPos--; // Move left
-        }
-
-        // Update time spent
-        timeSpent++;
-
-        // Update maximum delay
-        maxDelay = max(maxDelay, timeSpent - currPos);
+signed main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    int t;
+    //t = 1;
+    cin>>t;
+    while (t--)
+    {
+        sol();
     }
-
-    // Print the maximum delay
-    cout << maxDelay << endl;
-
-    return 0;
 }
